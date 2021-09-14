@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/article/list") 
+@WebServlet("/article/list")
 public class ArticleListServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -21,8 +21,8 @@ public class ArticleListServlet extends HttpServlet {
 		response.setContentType("text/html; charset=UTF-8");
 
 		String url = "jdbc:mysql://localhost:3306/am?serverTimezone=Asia/Seoul&useOldAliasMetadataBehavior=true&zeroDateTimeBehavior=convertToNull";
-		String user = "root";
-		String password = "";
+		String user = "sbsst";
+		String password = "sbs123414";
 
 		// 커넥터 드라이버 활성화
 		String driverName = "com.mysql.cj.jdbc.Driver";
@@ -42,10 +42,18 @@ public class ArticleListServlet extends HttpServlet {
 			conn = DriverManager.getConnection(url, user, password);
 			DBUtil dbUtil = new DBUtil(request, response);
 
-			String sql = "SELECT * FROM article";
+			String sql = "SELECT * FROM article ORDER BY id DESC";
 			List<Map<String, Object>> articleRows = dbUtil.selectRows(conn, sql);
 
-			response.getWriter().append(articleRows.toString());
+			for (int i = 0; i < articleRows.size(); i++) {
+				Map<String, Object> articleRow = articleRows.get(i);
+				
+				int id = (int)articleRow.get("id");
+				String title = (String)articleRow.get("title");
+
+				response.getWriter().append(String.format("<div>%d, %s</div>", id, title));
+
+			}
 
 		} catch (SQLException e) {
 			e.printStackTrace();
